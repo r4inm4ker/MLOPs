@@ -42,6 +42,27 @@
         }
     }
 
+    groupcollapsible {
+        name    "folder2"
+        label   "LoRa"
+
+        parm {
+            name    "loraweights"
+            label   "Weights"
+            type    file
+            default { "" }
+            parmtag { "script_callback_language" "python" }
+        }
+        parm {
+            name    "lorascale"
+            label   "Scale"
+            type    float
+            default { "1" }
+            range   { 0! 1! }
+            parmtag { "script_callback_language" "python" }
+        }
+    }
+
     groupsimple {
         name    "folder1"
         label   "Settings"

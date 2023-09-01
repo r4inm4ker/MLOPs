@@ -4,6 +4,7 @@ import numpy
 import torch
 from compel import Compel
 from transformers import CLIPTextModel, CLIPTokenizer
+from diffusers.loaders import LoraLoaderMixin
 
 logging.disable(logging.WARNING)
 
@@ -14,6 +15,7 @@ def run(
     torch_device,
     model,
     local_cache_only=True,
+    lora=None,
 ):
     try:
         text_encoder = CLIPTextModel.from_pretrained(
@@ -25,6 +27,12 @@ def run(
         )
     except Exception as err:
         print(f"Unexpected {err}, {type(err)}")
+
+    if lora["weights"] != "":
+        state_dict, network_alpha = LoraLoaderMixin.lora_state_dict(".", weight_name=lora["weights"])
+        LoraLoaderMixin.load_lora_into_text_encoder(
+            state_dict, network_alpha, text_encoder, lora_scale=lora['scale'])
+
     text_encoder.to(torch_device)
 
     try:
