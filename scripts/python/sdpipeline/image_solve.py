@@ -4,6 +4,8 @@ import numpy
 import torch
 from diffusers import ControlNetModel, UNet2DConditionModel
 from diffusers.pipelines.controlnet.multicontrolnet import MultiControlNetModel
+from diffusers import StableDiffusionPipeline
+
 from tqdm.auto import tqdm
 
 from . import schedulers_lookup
@@ -38,18 +40,17 @@ def run(
     scheduler.set_timesteps(inference_steps)
     timesteps = scheduler.timesteps
 
-    cross_attention_kwargs = {}
-    unet = UNet2DConditionModel.from_pretrained(
-        model,
-        subfolder="unet",
-        local_files_only=local_cache_only,
-        torch_dtype=dtype_unet,
+    pipeline = StableDiffusionPipeline.from_pretrained(
+         model, local_files_only=local_cache_only, torch_dtype=dtype_unet,
     )
+
+    cross_attention_kwargs = {}
+
     if lora["weights"] != "":
         cross_attention_kwargs = {"scale": lora["scale"]}
-        unet.load_attn_procs(
-            lora["weights"], use_safetensors=lora["weights"].endswith(".safetensors")
-        )
+        pipeline.load_lora_weights(".", weight_name=lora["weights"], use_safetensors=lora["weights"].endswith(".safetensors"))
+
+    unet = pipeline.unet
     unet.to(torch_device)
 
     if seamless_gen:
