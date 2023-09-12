@@ -245,4 +245,5 @@ def run(model, mode, input_colors, cache_only,low_threshold=None, high_threshold
     else:
         processed_image = img
 
+    processed_image = processed_image.resize((width, height))
     return processed_image
