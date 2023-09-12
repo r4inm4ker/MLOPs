@@ -42,6 +42,7 @@
             type    integer
             default { "512" }
             range   { 0 10 }
+            parmtag { "script_action" "parm = kwargs[\"parmtuple\"]\n\nval = parm.evalAsInts()[0]\n\nimport math\nval = 8 * math.ceil(val/8)\nparm[0].set(val)" }
             parmtag { "script_callback_language" "python" }
         }
         parm {
@@ -50,10 +51,19 @@
             type    integer
             default { "512" }
             range   { 0 10 }
+            parmtag { "script_action" "parm = kwargs[\"parmtuple\"]\n\nval = parm.evalAsInts()[0]\n\nimport math\nval = 8 * math.ceil(val/8)\nparm[0].set(val)" }
             parmtag { "script_callback_language" "python" }
         }
     }
 
+    parm {
+        name    "set_original_size"
+        label   "Set Original Size"
+        type    button
+        default { "0" }
+        parmtag { "script_callback" "image_node=hou.node(\"./cop2net2/file1\");resolution = (image_node.xRes(), image_node.yRes());node=hou.node(\".\");node.parm(\"width\").set(resolution[0]);node.parm(\"height\").set(resolution[1]);" }
+        parmtag { "script_callback_language" "python" }
+    }
     groupcollapsible {
         name    "folder1"
         label   "Color Correction"
